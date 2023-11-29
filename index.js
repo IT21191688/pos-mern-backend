@@ -8,72 +8,39 @@ bcrypt(npm i bcrypt)
 jsonwebtoken(npm i jsonwebtoken)
 */
 
-const dotenv = require("dotenv/config");
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+const bodyParser = require('body-parser');
+const port = process.env.SERVER_PORT || 3000; // Corrected the bitwise OR to logical OR
 const app = express();
 
+const userRoute = require('./routes/user.route');
 
-//import .env
-require("dotenv").config();
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
 
-//initialize port number
-const PORT = process.env.PORT || 8080;
-
-//use dependancies
-app.use(cors());
-//get json using bodyparser
+// parse application/json
 app.use(bodyParser.json());
 
-//connect mongo db options
+// Connect to MongoDB
 const URI = process.env.MONGODB_URL;
 
-
-//auth
-app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false, store: MongoStore.create({ mongoUrl: URI }), cookie: { secure: false, expires: new Date(Date.now() + 50000) }, maxAge: 10000 }));
-app.use(passport.initialize());
-app.use(passport.session());
-
-
-//    1.20
-
-mongoose.connect(URI, {
-
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-
-}).then(() => {
-
-    console.log('Connected to MongoDB!!!');
-
-    app.listen(PORT, () => {
-        console.log(`Server is up and running on port ${PORT}`);
-        routsInit(app, passport)
-        googleAuth(passport)
-
-
-
+mongoose.connect(URI)
+    .then(() => {
+        app.listen(port, () => {
+            console.log(`MongoDB Connected`);
+            console.log(`Server Started & running on port ${port}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
     });
-}).catch((error) => {
-    console.log("Error Connecting MongoDb", error);
+
+app.get('/test-api', (req, res) => {
+    return res.json({ 'message': 'Server Started!' });
 });
 
 
-
-
-const db = mongoose.connection;
-
-app.use('/auth', authRoutes);
-
-app.use('/courses', courseRouter);
-app.use('/tutorials', tutorialRouter);
-
-app.use('/api/posts', postRoutes);
-app.use('/api/comments', commentRoutes);
-
-app.use('/TuteFiles', express.static(__dirname + '/TuteFiles'));
-
-
-
+app.use(`/api/v1/user`, userRoute);
