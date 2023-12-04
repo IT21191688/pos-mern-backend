@@ -16,7 +16,10 @@ const bodyParser = require('body-parser');
 const port = process.env.SERVER_PORT || 3000; // Corrected the bitwise OR to logical OR
 const app = express();
 
-const userRoute = require('./routes/user.route');
+const userRoute = require('./routes/UserRoute');
+const customerRoute = require('./routes/CustomerRoute');
+const orderRoute = require('./routes/OrderRoute');
+const productRoute = require('./routes/ProductRoute');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -43,4 +46,7 @@ app.get('/test-api', (req, res) => {
 });
 
 
-app.use(`/api/v1/user`, userRoute);
+app.use('/api/v1/users', userRoute);
+app.use('/api/v1/orders', orderRoute);
+app.use('/api/v1/products', productRoute);
+app.use('/api/v1/customers', customerRoute);
