@@ -9,7 +9,7 @@
 *
 * */
 const cors = require('cors')
-const express= require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -29,21 +29,21 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
-try{
-    mongoose.connect('mongodb://127.0.0.1:27017/posapi');
-    app.listen(port,()=>{
+try {
+    mongoose.connect(process.env.MONGODB_URL);
+    app.listen(port, () => {
         console.log(`server Started & running on port ${port}`);
     })
-}catch (e){
+} catch (e) {
     console.log(e);
 }
 
-app.get('/test-api',(req,resp)=>{
-    return resp.json({'message':'Server Started!'})
+app.get('/test-api', (req, resp) => {
+    return resp.json({ 'message': 'Server Started!' })
 })
 
 //------------
-app.use('/api/v1/users',userRoute);
-app.use('/api/v1/orders',orderRoute);
-app.use('/api/v1/products',productRoute);
-app.use('/api/v1/customers',customerRoute);
+app.use('/api/v1/users', userRoute);
+app.use('/api/v1/orders', orderRoute);
+app.use('/api/v1/products', productRoute);
+app.use('/api/v1/customers', customerRoute);
