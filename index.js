@@ -30,10 +30,17 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 try {
-    mongoose.connect(process.env.MONGODB_URL);
-    app.listen(port, () => {
-        console.log(`server Started & running on port ${port}`);
-    })
+    mongoose.connect(process.env.MONGODB_URL)
+        .then(() => {
+            console.log("Mongodb connected");
+
+            app.listen(port, () => {
+                console.log(`Server Started & running on port ${port}`);
+            });
+        })
+        .catch((error) => {
+            console.error('Error connecting to MongoDB:', error);
+        });
 } catch (e) {
     console.log(e);
 }
